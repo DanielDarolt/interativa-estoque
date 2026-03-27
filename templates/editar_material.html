@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Editar Material</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="page-top">
+    <a href="/materiais" class="btn-voltar">Voltar</a>
+
+    <h1>Editar Material</h1>
+    <p class="page-subtitle">Atualize os dados do material cadastrado.</p>
+</div>
+
+<div class="card card-editar">
+
+    <form method="POST">
+
+        <div class="field-group">
+            <label>Nome</label>
+            <input name="nome" value="{{material[1]}}" required>
+        </div>
+
+        <div class="form-grid">
+            <div class="field-group">
+                <label>Espessura (mm)</label>
+                <input name="espessura" type="number" value="{{material[2]}}" required>
+            </div>
+
+            <div class="field-group">
+                <label>Quantidade</label>
+                <input name="quantidade" type="number" value="{{material[3]}}" required>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn-secundario" onclick="abrirModalExcluir()">
+                Excluir
+            </button>
+
+            <button type="submit" class="btn-salvar">
+                Salvar Alterações
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<div id="modal-excluir" class="modal">
+    <div class="modal-card modal-card-small">
+        <h3>Excluir material</h3>
+        <p>Tem certeza que deseja excluir este material?</p>
+
+        <div class="modal-botoes">
+            <a href="/excluir_material/{{material[0]}}" class="btn-excluir">Excluir</a>
+            <button type="button" class="btn-secundario" onclick="fecharModalExcluir()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirModalExcluir(){
+    document.getElementById("modal-excluir").classList.add("ativo");
+}
+
+function fecharModalExcluir(){
+    document.getElementById("modal-excluir").classList.remove("ativo");
+}
+</script>
+
+</body>
+</html>

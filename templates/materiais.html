@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Materiais</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<h1>Materiais</h1>
+
+<div class="nav">
+<a href="/">Início</a>
+<a href="/projetos">Projetos</a>
+<a href="/estoque">Estoque</a>
+</div>
+
+<div class="card">
+
+<h2>Adicionar Material</h2>
+
+<form method="POST">
+
+<label>Nome</label>
+<input name="nome" required>
+
+<label>Espessura (mm)</label>
+<select name="espessura" required>
+    <option value="">Selecione</option>
+    <option value="15">15mm</option>
+    <option value="18">18mm</option>
+    <option value="25">25mm</option>
+</select>
+
+<label>Quantidade (chapas)</label>
+<input name="quantidade" type="number" required>
+
+<button type="submit">Salvar</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>Estoque</h2>
+
+<ul>
+{% for m in materiais %}
+
+<li>
+
+<span>
+{{m[1]}} | {{m[2]}}mm → {{m[3]}} chapas
+</span>
+
+<span>
+
+<a href="/editar_material/{{m[0]}}" class="btn-editar-card">Editar</a>
+
+</span>
+
+</li>
+
+{% endfor %}
+</ul>
+
+</div>
+
+</body>
+</html>

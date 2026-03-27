@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Estoque</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<h1>Estoque de Materiais</h1>
+
+<div class="nav">
+<a href="/">Início</a>
+<a href="/materiais">Materiais</a>
+<a href="/projetos">Projetos</a>
+</div>
+
+<div class="card">
+
+<h2>Materiais em estoque</h2>
+
+<ul>
+
+{% for m in materiais %}
+
+<li>
+
+<span>
+{{m[1]}} | {{m[2]}}mm
+</span>
+
+<span>
+
+Quantidade: {{m[3]}}
+
+<a href="/editar_material/{{m[0]}}" class="btn-editar">
+Editar
+</a>
+
+<a href="#" class="btn-excluir" onclick="abrirModalExcluir('{{m[0]}}'); return false;">
+Excluir
+</a>
+
+</span>
+
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+<div id="modal-excluir" class="modal">
+    <div class="modal-card">
+        <h3>Confirmar exclusão</h3>
+        <p>Tem certeza que deseja excluir este material?</p>
+
+        <div class="modal-botoes">
+            <a id="confirmar-excluir" href="#" class="btn-excluir">Excluir</a>
+            <button type="button" onclick="fecharModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirModalExcluir(id) {
+    let modal = document.getElementById("modal-excluir");
+    let botaoConfirmar = document.getElementById("confirmar-excluir");
+
+    botaoConfirmar.href = "/excluir_material/" + id;
+    modal.classList.add("ativo");
+}
+
+function fecharModal() {
+    let modal = document.getElementById("modal-excluir");
+    modal.classList.remove("ativo");
+}
+</script>
+
+</body>
+</html>

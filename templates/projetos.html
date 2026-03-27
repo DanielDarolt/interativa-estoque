@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Projetos</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<h1>Projetos</h1>
+
+<div class="nav">
+<a href="/">Início</a>
+<a href="/materiais">Materiais</a>
+<a href="/estoque">Estoque</a>
+</div>
+
+<div class="card">
+
+<h2>Criar Projeto</h2>
+
+<form method="POST">
+
+<label>Nome do Projeto</label>
+<input name="nome" required>
+
+<label>Material</label>
+<select name="material_id" required>
+
+{% for m in materiais %}
+
+<option value="{{m[0]}}">
+{{m[1]}} - {{m[2]}}mm ({{m[3]}} em estoque)
+</option>
+
+{% endfor %}
+
+</select>
+
+<label>Quantidade necessária</label>
+<input type="number" name="quantidade" min="1" required>
+
+<button type="submit">Criar Projeto</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>Projetos cadastrados</h2>
+
+<ul>
+
+{% for p in projetos %}
+
+<li>
+
+<span>
+{{p[1]}} | Status: {{p[2]}}
+</span>
+
+<span>
+
+<a href="/produzir/{{p[0]}}">Produzir</a>
+ |
+<a href="/excluir_projeto/{{p[0]}}">Excluir</a>
+
+</span>
+
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+</body>
+</html>
