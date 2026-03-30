@@ -52,27 +52,27 @@ def materiais():
     if request.method == 'POST':
         nome = request.form['nome']
         espessura = request.form['espessura']
-        quantidade = request.form['quantidade']
+        quantidade = int(request.form['quantidade'])
 
-    cursor.execute("""
-        INSERT INTO materiais (nome, espessura, quantidade)
-        VALUES (%s, %s, %s)
-        RETURNING id
-    """, (nome, espessura, quantidade))
-        
-    material_id = cursor.fetchone()[0]
+        cursor.execute("""
+            INSERT INTO materiais (nome, espessura, quantidade)
+            VALUES (%s, %s, %s)
+            RETURNING id
+        """, (nome, espessura, quantidade))
 
-    registrar_movimentacao(
-        cursor=cursor,
-        material_id=material_id,
-        tipo_movimentacao='entrada_manual',
-        quantidade_movimentada=int(quantidade),
-        estoque_antes=0,
-        estoque_depois=int(quantidade),
-        observacao='Cadastro inicial do material'
-    )
+        material_id = cursor.fetchone()[0]
 
-    conn.commit()
+        registrar_movimentacao(
+            cursor=cursor,
+            material_id=material_id,
+            tipo_movimentacao='entrada_manual',
+            quantidade_movimentada=quantidade,
+            estoque_antes=0,
+            estoque_depois=quantidade,
+            observacao='Cadastro inicial do material'
+        )
+
+        conn.commit()
 
     cursor.execute('SELECT * FROM materiais ORDER BY id')
     dados = cursor.fetchall()
