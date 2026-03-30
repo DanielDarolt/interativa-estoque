@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Movimentação</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="page-top">
+    <a href="/" class="btn-voltar">Voltar</a>
+    <h1>Histórico de Movimentação</h1>
+    <p class="page-subtitle">Acompanhe entradas, ajustes e produções do estoque.</p>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Material</th>
+                    <th>Espessura</th>
+                    <th>Tipo</th>
+                    <th>Qtd. Mov.</th>
+                    <th>Antes</th>
+                    <th>Depois</th>
+                    <th>Projeto</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in historicos %}
+                <tr>
+                    <td>{{ item.data }}</td>
+                    <td>{{ item.material }}</td>
+                    <td>{{ item.espessura }} mm</td>
+                    <td>{{ item.tipo }}</td>
+                    <td>{{ item.quantidade_movimentada }}</td>
+                    <td>{{ item.estoque_antes }}</td>
+                    <td>{{ item.estoque_depois }}</td>
+                    <td>{{ item.projeto }}</td>
+                    <td>{{ item.observacao }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

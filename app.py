@@ -354,3 +354,50 @@ def estoque():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# =========================
+# HISTORICO
+# =========================
+
+@app.route('/historico')
+def historico():
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            h.id,
+            m.nome,
+            m.espessura,
+            h.tipo_movimentacao,
+            h.quantidade_movimentada,
+            h.estoque_antes,
+            h.estoque_depois,
+            COALESCE(p.nome, '-') AS projeto_nome,
+            COALESCE(h.observacao, '-') AS observacao,
+            h.data_movimentacao
+        FROM historico_movimentacao h
+        JOIN materiais m ON h.material_id = m.id
+        LEFT JOIN projetos p ON h.projeto_id = p.id
+        ORDER BY h.id DESC
+    """)
+
+    dados = cursor.fetchall()
+    conn.close()
+
+    historicos = []
+    for item in dados:
+        historicos.append({
+            "id": item[0],
+            "material": item[1],
+            "espessura": item[2],
+            "tipo": item[3],
+            "quantidade_movimentada": item[4],
+            "estoque_antes": item[5],
+            "estoque_depois": item[6],
+            "projeto": item[7],
+            "observacao": item[8],
+            "data": item[9].strftime("%d/%m/%Y %H:%M")
+        })
+
+    return render_template('historico.html', historicos=historicos)
