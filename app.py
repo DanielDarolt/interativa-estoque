@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect
 import psycopg
 import os
 
+from psycopg import cursor
+
 app = Flask(__name__)
 
 DATABASE_URL = os.getenv(
@@ -11,6 +13,29 @@ DATABASE_URL = os.getenv(
 
 def conectar():
     return psycopg.connect(DATABASE_URL)
+
+def registrar_movimentacao(cursor, material_id, tipo_movimentacao, quantidade_movimentada,
+                           estoque_antes, estoque_depois, projeto_id=None, observacao=None):
+    cursor.execute("""
+        INSERT INTO historico_movimentacao (
+            material_id,
+            projeto_id,
+            tipo_movimentacao,
+            quantidade_movimentada,
+            estoque_antes,
+            estoque_depois,
+            observacao
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (
+        material_id,
+        projeto_id,
+        tipo_movimentacao,
+        quantidade_movimentada,
+        estoque_antes,
+        estoque_depois,
+        observacao
+    ))
 
 @app.route('/')
 def index():
@@ -29,11 +54,25 @@ def materiais():
         espessura = request.form['espessura']
         quantidade = request.form['quantidade']
 
-        cursor.execute('''
-            INSERT INTO materiais (nome, espessura, quantidade)
-            VALUES (%s, %s, %s)
-        ''', (nome, espessura, quantidade))
-        conn.commit()
+    cursor.execute("""
+        INSERT INTO materiais (nome, espessura, quantidade)
+        VALUES (%s, %s, %s)
+        RETURNING id
+    """, (nome, espessura, quantidade))
+        
+    material_id = cursor.fetchone()[0]
+
+    registrar_movimentacao(
+        cursor=cursor,
+        material_id=material_id,
+        tipo_movimentacao='entrada_manual',
+        quantidade_movimentada=int(quantidade),
+        estoque_antes=0,
+        estoque_depois=int(quantidade),
+        observacao='Cadastro inicial do material'
+    )
+
+    conn.commit()
 
     cursor.execute('SELECT * FROM materiais ORDER BY id')
     dados = cursor.fetchall()
@@ -52,18 +91,39 @@ def editar_material(material_id):
     if request.method == 'POST':
         nome = request.form['nome']
         espessura = request.form['espessura']
-        quantidade = request.form['quantidade']
+        quantidade_nova = int(request.form['quantidade'])
 
+        # Busca a quantidade antiga antes de atualizar
+        cursor.execute("SELECT quantidade FROM materiais WHERE id = %s", (material_id,))
+        resultado = cursor.fetchone()
+
+        if not resultado:
+            conn.close()
+            return "Material não encontrado."
+
+        quantidade_antiga = int(resultado[0])
+
+        # Atualiza o material
         cursor.execute('''
             UPDATE materiais
             SET nome = %s, espessura = %s, quantidade = %s
             WHERE id = %s
-        ''', (nome, espessura, quantidade, material_id))
+        ''', (nome, espessura, quantidade_nova, material_id))
 
-        cursor.execute('''
-            INSERT INTO historico (material_id, quantidade, projeto_id)
-            VALUES (%s, %s, NULL)
-        ''', (material_id, quantidade))
+        # Só registra histórico se a quantidade mudou
+        if quantidade_nova != quantidade_antiga:
+            diferenca = abs(quantidade_nova - quantidade_antiga)
+
+            registrar_movimentacao(
+                cursor=cursor,
+                material_id=material_id,
+                tipo_movimentacao='ajuste_estoque',
+                quantidade_movimentada=diferenca,
+                estoque_antes=quantidade_antiga,
+                estoque_depois=quantidade_nova,
+                projeto_id=None,
+                observacao='Ajuste manual na edição do material'
+            )
 
         conn.commit()
         conn.close()
