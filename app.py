@@ -385,13 +385,24 @@ def historico():
     dados = cursor.fetchall()
     conn.close()
 
+    tipos_formatados = {
+        "entrada_manual": "Entrada manual",
+        "saida_manual": "Saída manual",
+        "producao_projeto": "Produção",
+        "ajuste_estoque": "Ajuste de estoque",
+        "edicao_material": "Edição de material",
+        "exclusao_material": "Exclusão de material"
+    }
+
     historicos = []
     for item in dados:
+        tipo_original = item[3]
+
         historicos.append({
             "id": item[0],
             "material": item[1],
             "espessura": item[2],
-            "tipo": item[3],
+            "tipo": tipos_formatados.get(tipo_original, tipo_original),
             "quantidade_movimentada": item[4],
             "estoque_antes": item[5],
             "estoque_depois": item[6],

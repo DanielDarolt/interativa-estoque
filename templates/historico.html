@@ -2,28 +2,29 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Histórico de Movimentação</title>
+    <title>Histórico</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
-<div class="page-top">
+<div class="page-top historico-top">
     <a href="/" class="btn-voltar">Voltar</a>
-    <h1>Histórico de Movimentação</h1>
-    <p class="page-subtitle">Acompanhe entradas, ajustes e produções do estoque.</p>
+    <h1>Histórico</h1>
+    <p class="page-subtitle">Movimentações registradas no estoque.</p>
 </div>
 
-<div class="card">
+<div class="card historico-card">
+    {% if historicos %}
     <div class="table-responsive">
-        <table>
+        <table class="historico-table">
             <thead>
                 <tr>
                     <th>Data</th>
                     <th>Material</th>
-                    <th>Espessura</th>
+                    <th>Esp.</th>
                     <th>Tipo</th>
-                    <th>Qtd. Mov.</th>
+                    <th>Qtd.</th>
                     <th>Antes</th>
                     <th>Depois</th>
                     <th>Projeto</th>
@@ -36,17 +37,27 @@
                     <td>{{ item.data }}</td>
                     <td>{{ item.material }}</td>
                     <td>{{ item.espessura }} mm</td>
-                    <td>{{ item.tipo }}</td>
+                    <td>
+                        <span class="tipo-badge">
+                            {{ item.tipo }}
+                        </span>
+                    </td>
                     <td>{{ item.quantidade_movimentada }}</td>
                     <td>{{ item.estoque_antes }}</td>
                     <td>{{ item.estoque_depois }}</td>
                     <td>{{ item.projeto }}</td>
-                    <td>{{ item.observacao }}</td>
+                    <td class="obs-col">{{ item.observacao }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% else %}
+    <div class="historico-vazio">
+        <h2>Nenhuma movimentação registrada</h2>
+        <p>Quando houver entradas, ajustes ou produções, elas aparecerão aqui.</p>
+    </div>
+    {% endif %}
 </div>
 
 </body>

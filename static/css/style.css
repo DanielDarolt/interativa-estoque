@@ -590,3 +590,109 @@ align-items:flex-start;
 gap:10px;
 }
 }
+
+.historico-top {
+    margin-bottom: 22px;
+}
+
+.historico-top h1 {
+    margin: 10px 0 6px;
+    font-size: 2.1rem;
+    font-weight: 700;
+}
+
+.historico-top .page-subtitle {
+    margin: 0;
+    opacity: 0.82;
+    font-size: 1rem;
+}
+
+.historico-card {
+    padding: 18px 20px;
+    border-radius: 18px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.historico-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.historico-table thead th {
+    padding: 14px 12px;
+    text-align: left;
+    font-weight: 600;
+    opacity: 0.9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    white-space: nowrap;
+}
+
+.historico-table tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.historico-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.historico-table .obs-col {
+    white-space: normal;
+    min-width: 280px;
+    line-height: 1.4;
+}
+
+.tipo-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.historico-vazio {
+    text-align: center;
+    padding: 38px 20px;
+    opacity: 0.9;
+}
+
+.historico-vazio h2 {
+    margin-bottom: 8px;
+    font-size: 1.3rem;
+}
+
+.historico-vazio p {
+    margin: 0;
+    opacity: 0.75;
+}
+
+@media (max-width: 768px) {
+    .historico-top h1 {
+        font-size: 1.7rem;
+    }
+
+    .historico-card {
+        padding: 14px;
+    }
+
+    .historico-table {
+        font-size: 0.9rem;
+    }
+
+    .historico-table thead th,
+    .historico-table tbody td {
+        padding: 10px 8px;
+    }
+
+    .historico-table .obs-col {
+        min-width: 220px;
+    }
+}
