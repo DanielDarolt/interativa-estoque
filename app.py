@@ -240,25 +240,44 @@ def produzir(projeto_id):
     ''', (projeto_id,))
     materiais = cursor.fetchall()
 
+    # Primeiro valida todo o estoque
     for material_id, qtd in materiais:
         cursor.execute("SELECT quantidade FROM materiais WHERE id = %s", (material_id,))
-        estoque = cursor.fetchone()[0]
+        resultado_estoque = cursor.fetchone()
+
+        if not resultado_estoque:
+            conn.close()
+            return f"Material {material_id} não encontrado"
+
+        estoque = int(resultado_estoque[0])
 
         if estoque < qtd:
             conn.close()
             return f"Estoque insuficiente para material {material_id}"
 
+    # Depois faz as baixas e registra histórico
     for material_id, qtd in materiais:
-        cursor.execute('''
-            UPDATE materiais
-            SET quantidade = quantidade - %s
-            WHERE id = %s
-        ''', (qtd, material_id))
+        cursor.execute("SELECT quantidade FROM materiais WHERE id = %s", (material_id,))
+        estoque_antes = int(cursor.fetchone()[0])
+
+        estoque_depois = estoque_antes - int(qtd)
 
         cursor.execute('''
-            INSERT INTO historico (material_id, quantidade, projeto_id)
-            VALUES (%s, %s, %s)
-        ''', (material_id, qtd, projeto_id))
+            UPDATE materiais
+            SET quantidade = %s
+            WHERE id = %s
+        ''', (estoque_depois, material_id))
+
+        registrar_movimentacao(
+            cursor=cursor,
+            material_id=material_id,
+            tipo_movimentacao='producao_projeto',
+            quantidade_movimentada=int(qtd),
+            estoque_antes=estoque_antes,
+            estoque_depois=estoque_depois,
+            projeto_id=projeto_id,
+            observacao='Baixa automática ao produzir projeto'
+        )
 
     cursor.execute('''
         UPDATE projetos
